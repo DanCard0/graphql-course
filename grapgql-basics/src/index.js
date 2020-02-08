@@ -3,15 +3,35 @@ import { GraphQLServer } from 'graphql-yoga';
 // Type definitions (schema)
 const typeDefs = `
     type Query {
-        hello: String!
+        greeting(name: String, position: String): String!
+        me: User!
+    }
+    
+    type User {
+        id: ID!
+        name: String!
+        email: String!
+        age: Int
     }
 `;
 
 // Resolvers
 const resolvers = {
     Query: {
-        hello() {
-            return "This is my first query!"
+        greeting(parent, args, ctx, info) {
+            if (args.name && args.position) {
+                return `Hello, ${args.name}! you are my favourite ${args.position}`;
+            } else {
+                return 'Hello!'
+            }
+        },
+        me() {
+            return {
+                id: '123456',
+                name: 'Daniel',
+                email: 'asdasd',
+                age: 28
+            }
         }
     }
 };
