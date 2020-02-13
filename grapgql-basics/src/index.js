@@ -35,12 +35,27 @@ const posts = [{
     author: '2'
 }];
 
+const comments = [{
+    id: '701',
+    text: 'My first comment',
+    author: '1'
+},{
+    id: '702',
+    text: 'My second comment',
+    author: '1'
+},{
+    id: '703',
+    text: 'My third comment',
+    author: '2'
+}];
+
 // Type definitions (schema)
 const typeDefs = `
     type Query {
         users(query: String): [User!]!
         me: User!
         posts(query: String): [Post!]!
+        comments: [Comment!]!
         post: Post!
     }
     
@@ -50,6 +65,13 @@ const typeDefs = `
         email: String!
         age: Int
         posts: [Post!]!
+        comments: [Comment!]!
+    }
+    
+    type Comment {
+        id: ID!
+        text: String!
+        author: User!
     }
     
     type Post {
@@ -72,6 +94,9 @@ const resolvers = {
             return users.filter((user) => {
                 return user.name.toLowerCase().includes(args.query.toLowerCase());
             });
+        },
+        comments(parent, args, ctx, info) {
+            return comments;
         },
         me() {
             return {
@@ -108,11 +133,23 @@ const resolvers = {
             })
         }
     },
+    Comment: {
+        author(parent, args, ctx, info) {
+            return users.find((user) => {
+                return user.id === parent.author
+            });
+        }
+    },
     User: {
         posts(parent, args, ctx, info) {
             return posts.filter((post) => {
                 return post.author === parent.id
-            })
+            });
+        },
+        comments(parent, args, ctx, info) {
+            return comments.filter((comment) => {
+                return comment.author === parent.id;
+            });
         }
     }
 };
